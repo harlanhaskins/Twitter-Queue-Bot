@@ -19,7 +19,18 @@ def add():
     includeTag = not not includeTag
 
     dbapi.addTweet(tweet, includeTag)
-    return Response("Added to the queue. That is number 42.", 200)
+    return Response("Added to the queue.", 200)
+
+@app.route("/next", methods=["GET"])
+def top():
+    tweet = dbapi.topTweet()
+    if not tweet:
+        return Response("No tweets.", 200)
+    return jsonify(content=tweet.content)
+
+@app.route("/count", methods=["GET"])
+def count():
+    return jsonify(count=dbapi.numberOfTweets())
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

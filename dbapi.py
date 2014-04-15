@@ -15,7 +15,7 @@ def addTweet(content="", shouldIncludeTag=False):
     Tweet.create(content=content)
 
 def allTweets():
-    return [user for user in Tweet.select().order_by(Tweet.id)]
+    return [tweet for tweet in Tweet.select().order_by(Tweet.id)]
 
 def numberOfTweets():
     return Tweet.select().count()
