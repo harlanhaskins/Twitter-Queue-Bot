@@ -56,7 +56,8 @@ def remove():
     response = dbapi.removeTweetWithID(id)
     if not response:
         return databaseErrorResponse()
-    return Response("Removed tweet.", 200)
+    tweetDict = dictionaryForTweet(response)
+    return jsonify(tweet=tweetDict)
 
 def databaseErrorResponse():
     return Response("The database is giving some issues with that query.", 500)
