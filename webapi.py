@@ -15,7 +15,7 @@ app = Flask(__name__)
 @cross_origin(headers=["Content-Type"])
 def add():
     if request.method == "OPTIONS":
-        return Response("Yeah there's some options here, bro.", 200)
+        return optionsResponse()
     arguments = request.args
     tweet = arguments.get("tweet", "")
     if not (tweet):
@@ -46,15 +46,16 @@ def count():
 def all():
     return jsonify(tweets=dbapi.allTweetDicts())
 
-@app.route("/remove", methods=["DELETE"])
+@app.route("/remove", methods=["DELETE", "OPTIONS"])
 @cross_origin(headers=["Content-Type"])
 def remove():
+    if request.method == "OPTIONS":
+        return optionsResponse()
     arguments = request.args
     id = arguments.get("id", "")
     if not id:
         return Response("You must provide an id, otherwise I don't know what to delete, ya dingus.", 412)
     response = dbapi.removeTweetWithID(id)
-    print(response)
     if not response:
         return databaseErrorResponse()
     tweetDict = dbapi.dictionaryForTweet(response)
@@ -62,6 +63,9 @@ def remove():
 
 def databaseErrorResponse():
     return Response("The database is giving some issues with that query.", 500)
+
+def optionsResponse():
+    return Response("Yeah there's some options here, bro.", 200)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
