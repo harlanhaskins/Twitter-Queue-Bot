@@ -12,7 +12,7 @@ def addTweet(content="", shouldIncludeTag=False):
         return
     if shouldIncludeTag:
         content += " #420Puns"
-    Tweet.create(content=content)
+    return Tweet.create(content=content)
 
 def allTweets():
     return [tweet for tweet in Tweet.select().order_by(Tweet.id)]
