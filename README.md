@@ -15,4 +15,4 @@ There are four main queries to the web api:
 | `/all`         |  None        | All of the tweets in the queue.           |            GET                      |
 | `/next`        |  None        | The next tweet in the queue.              |            GET                      |
 | `/count`       |  None        | The total number of tweets in the queue.  |            GET                      |  
-| `/remove`      |  `id`        | Removes the provided ID from the database |            GET                      |   
+| `/remove`      |  `id`        | Removes the provided ID from the database |            DELETE                   |   
