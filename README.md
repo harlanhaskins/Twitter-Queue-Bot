@@ -5,7 +5,7 @@ A Twitter bot that reads and tweets messages in sequence from a queue in a SQLit
 
 # Usage
 
-The server requires a few python libraries: `requests`, `peewee`, `twitter`, `argparse`.
+The server requires a few python libraries: `flask`, `requests`, `peewee`, `twitter`, `argparse`.
 
 There are four main queries to the web api:
 
