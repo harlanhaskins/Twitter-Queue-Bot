@@ -1,8 +1,6 @@
 #!/usr/bin/env python
-import requests
 import dbapi
 import json
-import webbrowser
 import twitter
 
 def tweet(twit):
