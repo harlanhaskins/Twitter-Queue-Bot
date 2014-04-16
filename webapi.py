@@ -51,9 +51,11 @@ def crossdomain(origin=None, methods=None, headers=None,
         return update_wrapper(wrapped_function, f)
     return decorator
 
-@app.route("/add", methods=["POST"])
+@app.route("/add", methods=["POST", "OPTIONS"])
 @crossdomain(origin='*')
 def add():
+    if request.method == "OPTIONS":
+        return Response("Yeah there's some options here, bro.", 200)
     arguments = request.args
     tweet = arguments.get("tweet", "")
     if not (tweet):
