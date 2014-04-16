@@ -5,9 +5,6 @@ db = SqliteDatabase('tweets.db', threadlocals=True)
 class Tweet(Model):
     content = CharField()
 
-    def __str__(self):
-        return json.dumps({"content":self.content, "id":self.id})
-
     class Meta():
         database = db
 
