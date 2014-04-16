@@ -54,6 +54,7 @@ def remove():
     if not id:
         return Response("You must provide an id, otherwise I don't know what to delete, ya dingus.", 412)
     response = dbapi.removeTweetWithID(id)
+    print(response)
     if not response:
         return databaseErrorResponse()
     tweetDict = dbapi.dictionaryForTweet(response)

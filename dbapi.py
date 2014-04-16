@@ -47,7 +47,9 @@ def popFirstTweet():
 
 def removeTweet(tweet):
     numberDeleted = tweet.delete_instance()
-    return numberDeleted
+    if numberDeleted == 0:
+        return None
+    return tweet
 
 def removeTweetWithID(id):
     tweet = Tweet.select().where(Tweet.id == id).first()
