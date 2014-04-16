@@ -12,13 +12,10 @@ app = Flask(__name__)
 def add():
     arguments = request.args
     tweet = arguments.get("tweet", "")
-    includeTag = arguments.get("includeTag", "")
     if not (tweet):
         return Response("Give me content, ya dingus.", status=412)
 
-    includeTag = not not includeTag
-
-    response = dbapi.addTweet(tweet, includeTag)
+    response = dbapi.addTweet(tweet)
     if not response:
         return Response("We had some trouble adding it to the database.", 500)
 

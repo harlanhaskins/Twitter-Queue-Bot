@@ -11,11 +11,9 @@ class Tweet(Model):
     class Meta():
         database = db
 
-def addTweet(content="", shouldIncludeTag=False):
+def addTweet(content=""):
     if not content:
         return
-    if shouldIncludeTag:
-        content += " #420Puns"
     return Tweet.create(content=content)
 
 def allTweetSelectQuery():
