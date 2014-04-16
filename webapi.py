@@ -35,6 +35,10 @@ def top():
 def count():
     return jsonify(count=dbapi.numberOfTweets())
 
+@app.route("/all", methods=["GET"])
+def all():
+    return jsonify(tweets=dbapi.allTweetDicts())
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--test",

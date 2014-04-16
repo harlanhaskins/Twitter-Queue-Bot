@@ -9,7 +9,7 @@ def tweet(twit):
     tweet = dbapi.topTweet()
     if not tweet:
         return
-    twit.statuses.update(status=tweet.content)
+    return twit.statuses.update(status=tweet.content)
 
 def urlWithEndpoint(endpoint):
     return baseURL + endPoint
@@ -33,4 +33,6 @@ def authenticate():
 
 if __name__ == "__main__":
     twit = authenticate()
-    tweet(twit)
+    response = tweet(twit)
+    if response:
+        dbapi.popFirstTweet()
