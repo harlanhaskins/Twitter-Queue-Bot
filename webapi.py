@@ -22,11 +22,11 @@ def add():
     return Response("Added to the queue.", 200)
 
 @app.route("/next", methods=["GET"])
-def top():
+def next():
     tweet = dbapi.topTweet()
     if not tweet:
         return Response("No tweets.", 200)
-    return jsonify(content=tweet.content)
+    return jsonify(tweet=dbapi.dictionaryForTweet(tweet))
 
 @app.route("/count", methods=["GET"])
 def count():

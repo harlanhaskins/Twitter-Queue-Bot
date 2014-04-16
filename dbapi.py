@@ -23,7 +23,10 @@ def allTweets():
     return [tweet for tweet in allTweetSelectQuery()]
 
 def allTweetDicts():
-    return [vars(tweet)["_data"] for tweet in allTweetSelectQuery()]
+    return [dictionaryForTweet(tweet) for tweet in allTweetSelectQuery()]
+
+def dictionaryForTweet(tweet):
+    return vars(tweet)["_data"]
 
 def numberOfTweets():
     return Tweet.select().count()
