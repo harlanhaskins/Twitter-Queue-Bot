@@ -18,7 +18,10 @@ def add():
 
     includeTag = not not includeTag
 
-    dbapi.addTweet(tweet, includeTag)
+    response = dbapi.addTweet(tweet, includeTag)
+    if not response:
+        return Response("We had some trouble adding it to the database.", 500)
+
     return Response("Added to the queue.", 200)
 
 @app.route("/next", methods=["GET"])
