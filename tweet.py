@@ -16,7 +16,7 @@ def baseURL():
     return "https://api.twitter.com/1.1/"
 
 def oAuthCredentials():
-    with open("credentials.txt") as credentialsFile:
+    with open("credentials.json") as credentialsFile:
         return json.loads(credentialsFile.readline())
 
 def authenticate():
