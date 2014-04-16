@@ -57,7 +57,7 @@ def add():
     arguments = request.args
     tweet = arguments.get("tweet", "")
     if not (tweet):
-        return CORSResponse("Give me content, ya dingus.", status=412)
+        return Response("Give me content, ya dingus.", status=412)
 
     response = dbapi.addTweet(tweet)
     if not response:
@@ -71,7 +71,7 @@ def add():
 def next():
     tweet = dbapi.topTweet()
     if not tweet:
-        return CORSResponse("No tweets.", 200)
+        return Response("No tweets.", 200)
     return jsonify(tweet=dbapi.dictionaryForTweet(tweet))
 
 @app.route("/count", methods=["GET"])
@@ -90,19 +90,14 @@ def remove():
     arguments = request.args
     id = arguments.get("id", "")
     if not id:
-        return CORSResponse("You must provide an id, otherwise I don't know what to delete, ya dingus.", 412)
+        return Response("You must provide an id, otherwise I don't know what to delete, ya dingus.", 412)
     response = dbapi.removeTweetWithID(id)
     if not response:
         return databaseErrorResponse()
-    return CORSResponse("Removed tweet.", 200)
+    return Response("Removed tweet.", 200)
 
 def databaseErrorResponse():
-    return CORSResponse("The database is giving some issues with that query.", 500)
-
-def CORSResponse(message, status):
-    response = Response(message, status)
-    response.headers['Access-Control-Allow-Origin'] = "*"
-    return response
+    return Response("The database is giving some issues with that query.", 500)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
