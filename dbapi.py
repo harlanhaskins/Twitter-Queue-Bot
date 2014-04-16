@@ -45,13 +45,17 @@ def popFirstTweet():
     if not tweet:
         print("Tweet doesn't exist.")
         return None
-
-    numberDeleted = tweet.delete_instance()
-
-    if numberDeleted < 1:
-        print("Tweet not deleted.")
-        return None
-
+    removeTweet(tweet)
     return tweet
+
+def removeTweet(tweet):
+    numberDeleted = tweet.delete_instance()
+    return numberDeleted
+
+def removeTweetWithID(id):
+    tweet = Tweet.select().where(Tweet.id == id).first()
+    if not tweet:
+        return None
+    return removeTweet(tweet)
 
 Tweet.create_table(True)

@@ -17,7 +17,7 @@ def add():
 
     response = dbapi.addTweet(tweet)
     if not response:
-        return Response("We had some trouble adding it to the database.", 500)
+        return databaseErrorResponse()
 
     return Response("Added to the queue.", 200)
 
@@ -35,6 +35,20 @@ def count():
 @app.route("/all", methods=["GET"])
 def all():
     return jsonify(tweets=dbapi.allTweetDicts())
+
+@app.route("/remove", methods=["DELETE"])
+def remove():
+    arguments = request.args
+    id = arguments.get("id", "")
+    if not id:
+        return Response("You must provide an id, otherwise I don't know what to delete, ya dingus.", 412)
+    response = dbapi.removeTweetWithID(id)
+    if not response:
+        return databaseErrorResponse()
+    return Response("Removed tweet.", 200)
+
+def databaseErrorResponse():
+    return Response("The database is giving some issues with that query.", 500)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
