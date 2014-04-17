@@ -81,7 +81,7 @@ def remove():
 
 @app.route("/move", methods=["POST"])
 def move():
-    arguments = request.args()
+    arguments = request.args
     fromIndex = arguments.get("from", "")
     toIndex = arguments.get("to", "")
     if not fromIndex:
@@ -89,6 +89,9 @@ def move():
 
     if not toIndex:
         toIndex = 1
+
+    fromIndex = int(fromIndex)
+    toIndex = int(toIndex)
 
     response = dbapi.moveTweet(fromIndex, toIndex)
     if not response:

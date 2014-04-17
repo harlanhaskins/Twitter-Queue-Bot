@@ -84,6 +84,9 @@ def removeTweet(tweet):
     numberDeleted = tweet.delete_instance()
     if numberDeleted == 0:
         return None
+    updateQuery = (Tweet.update(order=(Tweet.order - 1))
+                        .where(Tweet.order > tweet.order))
+    updateQuery.execute()
     return tweet
 
 def removeTweetWithID(id):
