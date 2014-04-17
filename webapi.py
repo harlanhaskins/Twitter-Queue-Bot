@@ -5,7 +5,6 @@ from flask import request, make_response, request, current_app
 from flask.json import jsonify
 from functools import update_wrapper
 from datetime import timedelta
-from flask_cors import *
 import argparse
 import dbapi
 
