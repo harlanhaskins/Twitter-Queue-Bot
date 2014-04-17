@@ -79,6 +79,24 @@ def remove():
     tweetDict = dbapi.dictionaryForTweet(response)
     return jsonify(tweet=tweetDict)
 
+@app.route("/move", methods=["POST"])
+def move():
+    arguments = request.args()
+    fromIndex = arguments.get("from", "")
+    toIndex = arguments.get("to", "")
+    if not fromIndex:
+        fromIndex = dbapi.numberOfTweets()
+
+    if not toIndex:
+        toIndex = 1
+
+    response = dbapi.moveTweet(fromIndex, toIndex)
+    if not response:
+        return databaseErrorResponse()
+
+    tweetDict = dictionaryFromTweet(response)
+    return jsonify(tweet=tweetDict)
+
 @app.after_request
 def set_allow_origin(resp):
     """ Set origin for GET, POST, PUT, DELETE requests """

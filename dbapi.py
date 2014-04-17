@@ -50,6 +50,10 @@ def moveTweet(fromIndex, toIndex):
     if fromIndex == toIndex:
         return None
 
+    count = numberOfTweets()
+    if fromIndex > count or toIndex > count:
+        return None
+
     tweet = (Tweet.select()
                   .where(Tweet.order == fromIndex)
                   .limit(1)
