@@ -102,7 +102,7 @@ def move():
     if not response:
         return databaseErrorResponse()
 
-    tweetDict = dbapi.dictionaryFromTweet(response)
+    tweetDict = dbapi.dictionaryForTweet(response)
     return jsonify(tweet=tweetDict)
 
 @app.after_request
