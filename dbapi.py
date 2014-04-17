@@ -10,8 +10,6 @@ class Tweet(Model):
         database = db
 
 def addTweet(content=""):
-    if not content:
-        return
     return insertTweet(content, numberOfTweets())
 
 def insertTweet(content, index):
