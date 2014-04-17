@@ -4,10 +4,11 @@ import json
 import twitter
 
 def tweet(twit):
-    tweet = dbapi.topTweet()
-    if not tweet:
+    tweetToTweet = dbapi.topTweet()
+    if not tweetToTweet:
         return
-    return twit.statuses.update(status=tweet.content)
+    return (twit.statuses.update(status=tweetToTweet.content),
+            tweetToTweet)
 
 def urlWithEndpoint(endpoint):
     return baseURL + endPoint
@@ -31,9 +32,9 @@ def authenticate():
 
 if __name__ == "__main__":
     twit = authenticate()
-    response = tweet(twit)
+    response, tweeted = tweet(twit)
     if response:
         dbapi.popFirstTweet()
-        print("Tweeted: \"" + response.content + "\"")
+        print("Tweeted: \"" + tweeted.content + "\"")
     else:
         print("Could not send tweet. Will try again tomorrow.")
