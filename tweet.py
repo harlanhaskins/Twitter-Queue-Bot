@@ -34,3 +34,6 @@ if __name__ == "__main__":
     response = tweet(twit)
     if response:
         dbapi.popFirstTweet()
+        print("Tweeted: \"" + response.content + "\"")
+    else:
+        print("Could not send tweet. Will try again tomorrow.")
