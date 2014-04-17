@@ -12,7 +12,7 @@ class Tweet(Model):
 def addTweet(content=""):
     if not content:
         return
-    return Tweet.create(content=content, order=numberOfTweets() + 1)
+    return Tweet.create(content=content, order=numberOfTweets())
 
 def allTweetSelectQuery():
     return Tweet.select().order_by(Tweet.order)

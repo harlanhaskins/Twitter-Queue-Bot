@@ -85,10 +85,10 @@ def move():
     fromIndex = arguments.get("from", "")
     toIndex = arguments.get("to", "")
     if not fromIndex:
-        fromIndex = dbapi.numberOfTweets()
+        fromIndex = (dbapi.numberOfTweets() - 1)
 
     if not toIndex:
-        toIndex = 1
+        toIndex = 0
 
     fromIndex = int(fromIndex)
     toIndex = int(toIndex)
