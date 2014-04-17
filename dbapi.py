@@ -1,4 +1,4 @@
-from peewee import * 
+from peewee import *
 import json
 db = SqliteDatabase('tweets.db', threadlocals=True)
 
@@ -43,8 +43,6 @@ def dictionaryForTweet(tweet):
 def numberOfTweets():
     return Tweet.select().count()
 
-
-
 def topTweet():
     tweets = (Tweet
             .select()
@@ -57,7 +55,6 @@ def topTweet():
 def popFirstTweet():
     tweet = topTweet()
     if not tweet:
-        print("Tweet doesn't exist.")
         return None
     removeTweet(tweet)
     return tweet
@@ -94,7 +91,8 @@ def moveTweet(fromIndex, toIndex):
     updateQuery.execute()
 
     tweet.order = toIndex
-    return tweet.save()
+    tweet.save()
+    return tweet
 
 def removeTweet(tweet):
     numberDeleted = tweet.delete_instance()
