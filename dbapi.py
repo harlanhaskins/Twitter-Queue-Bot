@@ -12,7 +12,23 @@ class Tweet(Model):
 def addTweet(content=""):
     if not content:
         return
-    return Tweet.create(content=content, order=numberOfTweets())
+    return insertTweet(content, numberOfTweets())
+
+def insertTweet(content, index):
+    if not content:
+        return None
+    if index > numberOfTweets():
+        return None
+
+    updateQuery = (Tweet.update(order=(Tweet.order + 1))
+                        .where(Tweet.order >= index))
+    updateQuery.execute()
+
+    tweet = Tweet.create(content=content, order=index)
+    if not tweet:
+        return None
+
+    return tweet
 
 def allTweetSelectQuery():
     return Tweet.select().order_by(Tweet.order)
@@ -28,6 +44,8 @@ def dictionaryForTweet(tweet):
 
 def numberOfTweets():
     return Tweet.select().count()
+
+
 
 def topTweet():
     tweets = (Tweet
