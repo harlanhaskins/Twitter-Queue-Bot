@@ -19,7 +19,7 @@ To start the server, just run `backend/webapi.py`. The service will be exposed o
 
 To automatically pull tweets from the queue, run `backend/tweet.py` in a cronjob. This will pop the first tweet off of the queue, tweet it using the credentials specified in `backend/credentials.json`, and delete it from the queue if the tweet was posted successfully.
 
-The credentials JSON file is not included in the repo, but should look something like this:
+The credentials JSON file should look something like this:
 
 ```json
 {
@@ -29,6 +29,8 @@ The credentials JSON file is not included in the repo, but should look something
 	"access_secret":""
 }
 ```
+
+Be sure to add in your own info!
 
 #### API Methods
 
