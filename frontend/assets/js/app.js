@@ -1,11 +1,27 @@
+// Make sure jQuery plays nice with Angular
 jQuery.noConflict();
 
+/*
+*   UPDATE THIS WITH YOUR INFO!
+*   base_url = Base url for the API
+*   title = The name you want for the admin panel
+*   twitter = The Twitter username for the queue (without the "@")
+*/
+var config = {
+    base_url: "",
+    title: "Twitter Queue",
+    twitter: ""
+}
+
+/*
+*   Angular app for the admin panel
+*/
 var app = angular.module("queueapp", []);
 
 function QueueController($scope, $window, $http) {
-    $scope.base_url = "http://san.csh.rit.edu:4200/";
-    $scope.title = "Twitter Queue";
-    $scope.twitter = "TheBenCentra";
+    $scope.base_url = config.base_url;
+    $scope.title = config.title;
+    $scope.twitter = config.twitter;
 
     $scope.newTweet = "";
     $scope.tweets = [];
