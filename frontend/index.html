@@ -41,7 +41,7 @@
 	    <section class="row">
 	    	<article class="col-md-6">
 	    		<h3>Next Tweet:</h3>
-	    		<div class="alert alert-success center featured-tweet">
+	    		<div class="alert alert-info center featured-tweet">
 	    			&quot;<span id="next-tweet">{{getFirstTweet().content}}</span>&quot;
 	    		</div>
 	    	</article>
@@ -52,7 +52,7 @@
 	    				<textarea class="form-control" rows="2" id="tweetBody" ng-model="newTweet" ng-change="checkLength();" placeholder="Here is my tweet. #hashtag"></textarea>
 	    			</div>
 	    			<div class="form-group center">
-	    				<button type="button" class="btn btn-success btn-lg" id="submitTweet" ng-click="submitTweet();">Add to Queue</button>
+	    				<button type="button" class="btn btn-primary btn-lg" id="submitTweet" ng-click="submitTweet();">Add to Queue</button>
 	    			</div>
 	    		</form>
 	    		<p class="center" ng-class="{red: newTweet.length > 140}">{{ 140 - newTweet.length }} chars left</p>
