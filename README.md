@@ -7,11 +7,32 @@ A Twitter bot that reads and tweets messages in sequence from a queue in a SQLit
 
 ## Backend (API)
 
+#### Dependencies
+
 The server requires a few python libraries: `flask`, `peewee`, `twitter`, `argparse`.
 
 All of these are installable through `pip`.
 
-These are the valid queries to the web api:
+#### Setup
+
+To start the server, just run `backend/webapi.py`. The service will be exposed on port 4200. You can access the API at "http://yourwebsite.com:4200".
+
+To automatically pull tweets from the queue, run `backend/tweet.py` in a cronjob. This will pop the first tweet off of the queue, tweet it using the credentials specified in `backend/credentials.json`, and delete it from the queue if the tweet was posted successfully.
+
+The credentials JSON file is not included in the repo, but should look something like this:
+
+```json
+{
+	"consumer_secret": "",
+	"consumer_key": "",
+	"access_key":"",
+	"access_secret":""
+}
+```
+
+#### API Methods
+
+These are the valid queries to the web API:
 
 | URL            |  Parameters |     Description                                |            Method              |
 |----------------|-------------|------------------------------------------------|--------------------------------|
