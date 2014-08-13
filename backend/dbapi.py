@@ -2,7 +2,7 @@ from peewee import *
 import json
 
 db = SqliteDatabase('tweets.db', threadlocals=True)
-
+i
 
 class Tweet(Model):
     content = CharField()
@@ -105,7 +105,6 @@ class Tweet(Model):
     def remove(self):
         number_deleted = self.delete_instance()
         if number_deleted == 0:
-            print("None deleted")
             return None
         update_query = (self.update(order=(Tweet.order - 1))
                         .where(Tweet.order > self.order))
@@ -115,7 +114,6 @@ class Tweet(Model):
     @classmethod
     def remove_with_id(cls, id):
         tweet = cls.select().where(cls.id == id).first()
-        print(tweet)
         if not tweet:
             return None
         return tweet.remove()
