@@ -9,104 +9,116 @@ class Tweet(Model):
     class Meta():
         database = db
 
-def addTweet(content=""):
-    return insertTweet(content, numberOfTweets())
+    @classmethod
+    def add(cls, content=""):
+        return cls.insert_at_index(content, cls.count())
 
-def insertTweet(content, index):
-    if not content:
-        return None
-    if index > numberOfTweets():
-        return None
+    @classmethod
+    def insert_at_index(cls, content, index):
+        if not content:
+            return None
+        if index > cls.count():
+            return None
 
-    updateQuery = (Tweet.update(order=(Tweet.order + 1))
-                        .where(Tweet.order >= index))
-    updateQuery.execute()
+        updateQuery = (cls.update(order=(cls.order + 1))
+                            .where(cls.order >= index))
+        updateQuery.execute()
 
-    tweet = Tweet.create(content=content, order=index)
-    if not tweet:
-        return None
+        tweet = Tweet.create(content=content, order=index)
+        if not tweet:
+            return None
 
-    return tweet
+        return tweet
 
-def allTweetSelectQuery():
-    return Tweet.select().order_by(Tweet.order)
+    @classmethod
+    def all_query(cls):
+        return Tweet.select().order_by(cls.order)
 
-def allTweets():
-    return [tweet for tweet in allTweetSelectQuery()]
+    @classmethod
+    def all(cls):
+        return [tweet for tweet in cls.all_query()]
 
-def allTweetDicts():
-    return [dictionaryForTweet(tweet) for tweet in allTweetSelectQuery()]
+    @classmethod
+    def all_dicts(cls):
+        return [tweet.json_object() for tweet in cls.all_query()]
 
-def dictionaryForTweet(tweet):
-    return vars(tweet)["_data"]
+    def json_object(self):
+        return vars(self)["_data"]
 
-def numberOfTweets():
-    return Tweet.select().count()
+    @classmethod
+    def count(cls):
+        return Tweet.select().count()
 
-def topTweet():
-    tweets = (Tweet
-            .select()
-            .order_by(Tweet.order)
-            .limit(1))
-    if not tweets:
-        return None
-    return tweets.first()
+    @classmethod
+    def top(cls):
+        tweets = (cls
+                .select()
+                .order_by(Tweet.order)
+                .limit(1))
+        if not tweets:
+            return None
+        return tweets.first()
 
-def popFirstTweet():
-    tweet = topTweet()
-    if not tweet:
-        return None
-    removeTweet(tweet)
-    return tweet
+    @classmethod
+    def pop(cls):
+        tweet = cls.top()
+        if not tweet:
+            return None
+        tweet.remove()
+        return tweet
 
-def moveTweet(fromIndex, toIndex):
-    if fromIndex == toIndex:
-        return None
+    @classmethod
+    def move(cls, fromIndex, toIndex):
+        if fromIndex == toIndex:
+            return None
 
-    count = numberOfTweets()
-    if fromIndex > count or toIndex > count:
-        return None
+        count = cls.count()
+        if fromIndex > count or toIndex > count:
+            return None
 
-    tweet = (Tweet.select()
-                  .where(Tweet.order == fromIndex)
-                  .limit(1)
-                  .first())
-    if not tweet:
-        return None
+        tweet = (cls.select()
+                    .where(cls.order == fromIndex)
+                    .limit(1)
+                    .first())
+        if not tweet:
+            return None
 
-    movingDown = fromIndex > toIndex
+        movingDown = fromIndex > toIndex
 
-    if (movingDown):
-        firstIndexSelectionQuery = Tweet.order < fromIndex
-        secondIndexSelectionQuery = Tweet.order >= toIndex
-    else:
-        firstIndexSelectionQuery = Tweet.order > fromIndex
-        secondIndexSelectionQuery = Tweet.order <= toIndex
+        if (movingDown):
+            firstIndexSelectionQuery = cls.order < fromIndex
+            secondIndexSelectionQuery = cls.order >= toIndex
+        else:
+            firstIndexSelectionQuery = cls.order > fromIndex
+            secondIndexSelectionQuery = cls.order <= toIndex
 
-    increment = 1 if movingDown else -1
+        increment = 1 if movingDown else -1
 
-    updateQuery = (Tweet.update(order=(Tweet.order + increment))
-                        .where(firstIndexSelectionQuery)
-                        .where(secondIndexSelectionQuery))
-    updateQuery.execute()
+        updateQuery = (cls.update(order=(Tweet.order + increment))
+                          .where(firstIndexSelectionQuery)
+                          .where(secondIndexSelectionQuery))
+        updateQuery.execute()
 
-    tweet.order = toIndex
-    tweet.save()
-    return tweet
+        tweet.order = toIndex
+        tweet.save()
+        return tweet
 
-def removeTweet(tweet):
-    numberDeleted = tweet.delete_instance()
-    if numberDeleted == 0:
-        return None
-    updateQuery = (Tweet.update(order=(Tweet.order - 1))
-                        .where(Tweet.order > tweet.order))
-    updateQuery.execute()
-    return tweet
+    def remove(self):
+        numberDeleted = self.delete_instance()
+        if numberDeleted == 0:
+            print("None deleted")
+            return None
+        updateQuery = (self.update(order=(Tweet.order - 1))
+                           .where(Tweet.order > self.order))
+        updateQuery.execute()
+        return self
 
-def removeTweetWithID(id):
-    tweet = Tweet.select().where(Tweet.id == id).first()
-    if not tweet:
-        return None
-    return removeTweet(tweet)
+    @classmethod
+    def remove_with_id(cls, id):
+        tweet = cls.select().where(cls.id == id).first()
+        print(tweet)
+        if not tweet:
+            return None
+        return tweet.remove()
 
 Tweet.create_table(True)

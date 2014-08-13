@@ -6,7 +6,7 @@ from flask.json import jsonify
 from functools import update_wrapper
 from datetime import timedelta
 import argparse
-import dbapi
+from dbapi import Tweet
 
 app = Flask(__name__)
 
@@ -47,30 +47,30 @@ def add():
         return Response("Give me content, ya dingus.", status=412)
 
     if not index:
-        response = dbapi.addTweet(tweet)
+        response = Tweet.add(tweet)
     else:
-        response = dbapi.insertTweet(tweet, int(index))
+        response = Tweet.insert(tweet, int(index))
 
     if not response:
         return databaseErrorResponse()
 
-    tweetDict = dbapi.dictionaryForTweet(response)
+    tweetDict = response.json_object()
     return jsonify(tweet=tweetDict)
 
 @app.route("/next", methods=["GET"])
 def next():
-    tweet = dbapi.topTweet()
+    tweet = Tweet.top()
     if not tweet:
         return Response("No tweets.", 200)
-    return jsonify(tweet=dbapi.dictionaryForTweet(tweet))
+    return jsonify(tweet=tweet.json_object())
 
 @app.route("/count", methods=["GET"])
 def count():
-    return jsonify(count=dbapi.numberOfTweets())
+    return jsonify(count=Tweet.count())
 
 @app.route("/all", methods=["GET"])
 def all():
-    return jsonify(tweets=dbapi.allTweetDicts())
+    return jsonify(tweets=Tweet.all_dicts())
 
 @app.route("/remove", methods=["DELETE", "OPTIONS"])
 def remove():
@@ -78,10 +78,10 @@ def remove():
     id = arguments.get("id", "")
     if not id:
         return Response("You must provide an id, otherwise I don't know what to delete, ya dingus.", 412)
-    response = dbapi.removeTweetWithID(id)
+    response = Tweet.remove_with_id(id)
     if not response:
         return databaseErrorResponse()
-    tweetDict = dbapi.dictionaryForTweet(response)
+    tweetDict = response.json_object()
     return jsonify(tweet=tweetDict)
 
 @app.route("/move", methods=["POST"])
@@ -90,7 +90,7 @@ def move():
     fromIndex = arguments.get("from", "")
     toIndex = arguments.get("to", "")
     if not fromIndex:
-        fromIndex = (dbapi.numberOfTweets() - 1)
+        fromIndex = (Tweet.count() - 1)
 
     if not toIndex:
         toIndex = 0
@@ -98,11 +98,11 @@ def move():
     fromIndex = int(fromIndex)
     toIndex = int(toIndex)
 
-    response = dbapi.moveTweet(fromIndex, toIndex)
+    response = Tweet.move(fromIndex, toIndex)
     if not response:
         return databaseErrorResponse()
 
-    tweetDict = dbapi.dictionaryForTweet(response)
+    tweetDict = response.json_object()
     return jsonify(tweet=tweetDict)
 
 @app.after_request
@@ -131,4 +131,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    app.run(host="localhost", port=4200, debug=args.test)
+    app.run(host="san.csh.rit.edu", port=4200, debug=args.test)
