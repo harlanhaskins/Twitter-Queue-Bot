@@ -1,36 +1,43 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import dbapi
+from dbapi import Tweet
 import json
 import twitter
 import argparse
 
+
 def tweet(twit):
-    tweetToTweet = dbapi.topTweet()
-    if not tweetToTweet:
+    tweet_to_tweet = Tweet.top()
+    if not tweet_to_tweet:
         return
-    return (twit.statuses.update(status=tweetToTweet.content),
-            tweetToTweet)
+    return (twit.statuses.update(status=tweet_to_tweet.content),
+            tweet_to_tweet)
 
-def urlWithEndpoint(endpoint):
-    return baseURL + endPoint
 
-def baseURL():
+def url_with_endpoint(end_point):
+    return base_url() + end_point
+
+
+def base_url():
     return "https://api.twitter.com/1.1/"
 
-def oAuthCredentials():
+
+def oauth_credentials():
     with open("credentials.json") as credentialsFile:
         return json.loads(credentialsFile.readline())
 
-def authenticate():
-    credentials        = oAuthCredentials()
-    consumerKey        = credentials["consumer_key"]
-    consumerSecret     = credentials["consumer_secret"]
-    accessKey          = credentials["access_key"]
-    accessSecret       = credentials["access_secret"]
 
-    auth = twitter.OAuth(accessKey, accessSecret, consumerKey, consumerSecret)
+def authenticate():
+    credentials = oauth_credentials()
+    consumer_key = credentials["consumer_key"]
+    consumer_secret = credentials["consumer_secret"]
+    access_key = credentials["access_key"]
+    access_secret = credentials["access_secret"]
+
+    auth = twitter.OAuth(access_key, access_secret,
+                         consumer_key, consumer_secret)
     return twitter.Twitter(auth=auth)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -39,12 +46,12 @@ if __name__ == "__main__":
                         action="store_true")
     args = parser.parse_args()
     if args.test:
-        print(dbapi.topTweet())
+        print(Tweet.top())
         exit(0)
     twit = authenticate()
     response, tweeted = tweet(twit)
     if response:
-        dbapi.popFirstTweet()
+        Tweet.pop()
         print("Tweeted: \"", tweeted.content, "\"", sep="")
     else:
         print("Could not send tweet. Will try again tomorrow.")

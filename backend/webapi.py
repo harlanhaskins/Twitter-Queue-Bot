@@ -10,6 +10,7 @@ from dbapi import Tweet
 
 app = Flask(__name__)
 
+
 @app.before_request
 def option_autoreply():
     """ Always reply 200 on OPTIONS request """
@@ -26,7 +27,8 @@ def option_autoreply():
         # Allow the origin which made the XHR
         h['Access-Control-Allow-Origin'] = request.headers['Origin']
         # Allow the actual method
-        h['Access-Control-Allow-Methods'] = request.headers['Access-Control-Request-Method']
+        h['Access-Control-Allow-Methods'] = request.headers['Access-Control"+ \
+                                                            "-Request-Method']
         # Allow for 10 seconds
         h['Access-Control-Max-Age'] = "10"
 
@@ -36,74 +38,82 @@ def option_autoreply():
 
         return resp
 
+
 @app.route("/add", methods=["POST", "OPTIONS"])
 def add():
     if request.method == "OPTIONS":
-        return optionsResponse()
+        return options_response()
     arguments = request.args
     tweet = arguments.get("tweet", "")
     index = arguments.get("index", "")
-    if not (tweet):
+    if not tweet:
         return Response("Give me content, ya dingus.", status=412)
 
     if not index:
         response = Tweet.add(tweet)
     else:
-        response = Tweet.insert(tweet, int(index))
+        response = Tweet.insert_at_index(tweet, int(index))
 
     if not response:
-        return databaseErrorResponse()
+        return database_error_response()
 
-    tweetDict = response.json_object()
-    return jsonify(tweet=tweetDict)
+    tweet_dict = response.json_object()
+    return jsonify(tweet=tweet_dict)
+
 
 @app.route("/next", methods=["GET"])
-def next():
+def next_tweet():
     tweet = Tweet.top()
     if not tweet:
         return Response("No tweets.", 200)
     return jsonify(tweet=tweet.json_object())
 
+
 @app.route("/count", methods=["GET"])
 def count():
     return jsonify(count=Tweet.count())
 
+
 @app.route("/all", methods=["GET"])
-def all():
+def all_tweets():
     return jsonify(tweets=Tweet.all_dicts())
+
 
 @app.route("/remove", methods=["DELETE", "OPTIONS"])
 def remove():
     arguments = request.args
     id = arguments.get("id", "")
     if not id:
-        return Response("You must provide an id, otherwise I don't know what to delete, ya dingus.", 412)
+        return Response("You must provide an id, otherwise I don't know what"
+                        " to delete, ya dingus.", 412)
     response = Tweet.remove_with_id(id)
     if not response:
-        return databaseErrorResponse()
-    tweetDict = response.json_object()
-    return jsonify(tweet=tweetDict)
+        return database_error_response()
+    tweet_dict = response.json_object()
+    return jsonify(tweet=tweet_dict)
+
 
 @app.route("/move", methods=["POST"])
 def move():
     arguments = request.args
-    fromIndex = arguments.get("from", "")
-    toIndex = arguments.get("to", "")
-    if not fromIndex:
-        fromIndex = (Tweet.count() - 1)
+    from_index = arguments.get("from", "")
+    to_index = arguments.get("to", "")
+    if not from_index:
+        from_index = (Tweet.count() - 1)
 
-    if not toIndex:
-        toIndex = 0
+    if not to_index:
+        to_index = 0
 
-    fromIndex = int(fromIndex)
-    toIndex = int(toIndex)
+    from_index = int(from_index)
+    to_index = int(to_index)
 
-    response = Tweet.move(fromIndex, toIndex)
+    response = Tweet.move(from_index, to_index)
     if not response:
-        return databaseErrorResponse()
+        return database_error_response()
 
-    tweetDict = response.json_object()
-    return jsonify(tweet=tweetDict)
+    tweet_dict = response.json_object()
+    return jsonify(tweet=tweet_dict)
+
 
 @app.after_request
 def set_allow_origin(resp):
@@ -117,16 +127,20 @@ def set_allow_origin(resp):
 
     return resp
 
-def databaseErrorResponse():
+
+def database_error_response():
     return Response("The database is giving some issues with that query.", 500)
 
-def optionsResponse():
+
+def options_response():
     return Response("Yeah there's some options here, bro.", 200)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--test",
-                        help="Runs the server in test mode and updates the testUsers database.",
+                        help="Runs the server in test mode and updates the"
+                             " testUsers database.",
                         action="store_true")
 
     args = parser.parse_args()

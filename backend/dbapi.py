@@ -1,6 +1,8 @@
 from peewee import *
 import json
+
 db = SqliteDatabase('tweets.db', threadlocals=True)
+
 
 class Tweet(Model):
     content = CharField()
@@ -20,9 +22,9 @@ class Tweet(Model):
         if index > cls.count():
             return None
 
-        updateQuery = (cls.update(order=(cls.order + 1))
-                            .where(cls.order >= index))
-        updateQuery.execute()
+        update_query = (cls.update(order=(cls.order + 1))
+                       .where(cls.order >= index))
+        update_query.execute()
 
         tweet = Tweet.create(content=content, order=index)
         if not tweet:
@@ -51,10 +53,7 @@ class Tweet(Model):
 
     @classmethod
     def top(cls):
-        tweets = (cls
-                .select()
-                .order_by(Tweet.order)
-                .limit(1))
+        tweets = (cls.select().order_by(Tweet.order).limit(1))
         if not tweets:
             return None
         return tweets.first()
@@ -68,49 +67,49 @@ class Tweet(Model):
         return tweet
 
     @classmethod
-    def move(cls, fromIndex, toIndex):
-        if fromIndex == toIndex:
+    def move(cls, from_index, to_index):
+        if from_index == to_index:
             return None
 
         count = cls.count()
-        if fromIndex > count or toIndex > count:
+        if from_index > count or to_index > count:
             return None
 
         tweet = (cls.select()
-                    .where(cls.order == fromIndex)
-                    .limit(1)
-                    .first())
+                 .where(cls.order == from_index)
+                 .limit(1)
+                 .first())
         if not tweet:
             return None
 
-        movingDown = fromIndex > toIndex
+        is_moving_down = from_index > to_index
 
-        if (movingDown):
-            firstIndexSelectionQuery = cls.order < fromIndex
-            secondIndexSelectionQuery = cls.order >= toIndex
+        if is_moving_down:
+            first_index_selection_query = cls.order < from_index
+            second_index_selectionquery = cls.order >= to_index
         else:
-            firstIndexSelectionQuery = cls.order > fromIndex
-            secondIndexSelectionQuery = cls.order <= toIndex
+            first_index_selection_query = cls.order > from_index
+            second_index_selectionquery = cls.order <= to_index
 
-        increment = 1 if movingDown else -1
+        increment = 1 if is_moving_down else -1
 
-        updateQuery = (cls.update(order=(Tweet.order + increment))
-                          .where(firstIndexSelectionQuery)
-                          .where(secondIndexSelectionQuery))
-        updateQuery.execute()
+        update_query = (cls.update(order=(Tweet.order + increment))
+                        .where(first_index_selection_query)
+                        .where(second_index_selectionquery))
+        update_query.execute()
 
-        tweet.order = toIndex
+        tweet.order = to_index
         tweet.save()
         return tweet
 
     def remove(self):
-        numberDeleted = self.delete_instance()
-        if numberDeleted == 0:
+        number_deleted = self.delete_instance()
+        if number_deleted == 0:
             print("None deleted")
             return None
-        updateQuery = (self.update(order=(Tweet.order - 1))
-                           .where(Tweet.order > self.order))
-        updateQuery.execute()
+        update_query = (self.update(order=(Tweet.order - 1))
+                        .where(Tweet.order > self.order))
+        update_query.execute()
         return self
 
     @classmethod
@@ -120,5 +119,6 @@ class Tweet(Model):
         if not tweet:
             return None
         return tweet.remove()
+
 
 Tweet.create_table(True)
