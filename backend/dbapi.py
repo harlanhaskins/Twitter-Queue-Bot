@@ -2,7 +2,7 @@ from peewee import *
 import json
 
 db = SqliteDatabase('tweets.db', threadlocals=True)
-i
+
 
 class Tweet(Model):
     content = CharField()
