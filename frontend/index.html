@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html ng-app="queueapp">
+<head>
+	<meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Twitter Queue Bot Admin Panel</title>
+	<link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
+	<script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script src="https://code.angularjs.org/1.3.0-beta.5/angular.min.js"></script>
+    <script src="assets/js/app.js"></script>
+</head>
+<body ng-controller="QueueController">
+	<div class="modal fade" id="warningModal">
+	    <div class="modal-dialog">
+		    <div class="modal-content">
+		        <div class="modal-header">
+		        	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		        	<h4 class="modal-title">Too Many Characters!</h4>
+		        </div>
+		        <div class="modal-body">
+		        	<p>This tweet is over 140 characters. Make sure you only have 140 characters or less!</p>
+		        </div>
+		        <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+		        </div>
+		    </div>
+	    </div>
+	</div>
+	<div id="wrapper" class="container">
+	    <header>
+	    	<div class="row">
+				<div class="col-md-12 center">
+					<h1>{{title}} Admin Panel</h1>
+					<p><a href="https://twitter.com/{{twitter}}" target="_blank">View @{{twitter}} Twitter Account</a></p>
+				</div>
+			</div>
+	    </header>  
+	    <section class="row">
+	    	<article class="col-md-6">
+	    		<h3>Next Tweet:</h3>
+	    		<div class="alert alert-info center featured-tweet">
+	    			&quot;<span id="next-tweet">{{getFirstTweet().content}}</span>&quot;
+	    		</div>
+	    	</article>
+	    	<article class="col-md-6">
+	    		<h3>Add a Tweet:</h3>
+	    		<form role="form">
+	    			<div class="form-group">
+	    				<textarea class="form-control" rows="2" id="tweetBody" ng-model="newTweet" ng-change="checkLength();" placeholder="Here is my tweet. #hashtag"></textarea>
+	    			</div>
+	    			<div class="form-group center">
+	    				<button type="button" class="btn btn-primary btn-lg" id="submitTweet" ng-click="submitTweet();">Add to Queue</button>
+	    			</div>
+	    		</form>
+	    		<p class="center" ng-class="{red: newTweet.length > 140}">{{ 140 - newTweet.length }} chars left</p>
+	    	</article>
+	    </section>
+	    <section class="row">
+	    	<article class="col-md-12">
+	    		<h3>Tweet Queue:</h3>
+	    		<table class="table table-striped table-bordered center">
+	    			<tr ng-repeat="tweet in tweets | orderBy:'+order'">
+                        <!-- Order + 1 because order is 0-indexed -->
+	    				<td class="tweet-id">{{tweet.order + 1}}</td>
+	    				<td class="tweet-body">{{tweet.content}}</td>
+	    				<td class="tweet-actions">
+	    					<button type="button" class="btn btn-sm btn-danger tweet-btn" ng-click="deleteTweet(tweet);">
+	    						<span class="glyphicon glyphicon-trash"></span>
+	    					</button>
+	    					<button type="button" class="btn btn-sm btn-primary tweet-btn" ng-click="escalateTweet(tweet);">
+	    						<span class="glyphicon glyphicon-arrow-up"></span>
+	    					</button>
+	    				</td>
+	    			</tr>
+	    		</table>
+	    	</article>
+	    </section>
+	    <footer>
+	    	<p class="center">Made with Harlan Haskins's <a href="https://github.com/harlanhaskins/Twitter-Queue-Bot" target="_blank">Twitter Queue Bot</a></p>
+	    	<p class="center">Grade-A Web Design by Ben Centra</p>
+	    <footer>
+	    <!--<audio class="hide">
+		    <source src="assets/audio/submitSound.mp3" preload="auto" type="audio/mp3">
+			Your browser does not support the audio element.
+        </audio>-->
+    </div>
+
+</body>
+</html>

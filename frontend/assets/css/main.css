@@ -1,0 +1,49 @@
+body {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    min-width: 320px;
+}
+
+#wrapper {
+    background-color: rgba(255,255,255,.85);
+    border-radius: 10px;
+    border: 1px solid rgba(100,100,100,.1);
+}
+
+@media (max-width: 768px) {
+    #wrapper {
+        margin: 10px;
+    }
+}
+
+table {
+    background: white;
+}
+
+.red {
+    color: red;
+}
+
+.featured-tweet {
+    font-size: 1.25em;
+}
+
+.tweet-btn {
+    margin: 2px;
+}
+
+.center {
+    text-align: center;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+.hide {
+    display: none;
+}
