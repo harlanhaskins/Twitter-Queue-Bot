@@ -19,7 +19,7 @@ var config = {
 var app = angular.module("queueapp", []);
 
 function QueueController($scope, $window, $http) {
-    $scope.base_url = config.base_url;
+    $scope.base_url = config.base_url + "/api/";
     $scope.title = config.title;
     $scope.twitter = config.twitter;
 
@@ -46,7 +46,7 @@ function QueueController($scope, $window, $http) {
 
     $scope.addTweet = function () {
         var tweetText = $scope.urlEncode($scope.newTweet.trim())
-        $http.post($scope.base_url+"add?tweet="+tweetText, {}).success(function (response) {
+        $http.post($scope.base_url+"tweets", {"tweet":tweetText}).success(function (response) {
             if (response.tweet) {
                 $scope.tweets.push(response.tweet);
                 $scope.newTweet = "";
@@ -62,7 +62,7 @@ function QueueController($scope, $window, $http) {
 
     $scope.deleteTweet = function (tweet) {
         var tweets = $scope.tweets;
-        $http.delete($scope.base_url+"remove?id="+tweet.id, {}).success(function (response) {
+        $http.delete($scope.base_url+"tweets/"+tweet.id, {}).success(function (response) {
             if (response.tweet) {
                 for (var i = 0; i < tweets.length; i++) {
                     if (tweets[i].order == tweet.order) {
@@ -74,7 +74,7 @@ function QueueController($scope, $window, $http) {
         })
     }
     $scope.escalateTweet = function (tweet) {
-        $http.post($scope.base_url+"move?from=" + tweet.order)
+        $http.post($scope.base_url+"tweets/move", {"from":tweet.order})
         $scope.getTweets();
     }
 
@@ -90,7 +90,7 @@ function QueueController($scope, $window, $http) {
     }
 
     $scope.getTweets = function () {
-        $http.get($scope.base_url+"all").success(function (response) {
+        $http.get($scope.base_url+"tweets").success(function (response) {
             console.log(response);
             $scope.tweets = response.tweets;
         }).error(function (error){
