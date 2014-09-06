@@ -46,7 +46,7 @@ if __name__ == "__main__":
                         action="store_true")
     args = parser.parse_args()
     if args.test:
-        print(Tweet.top())
+        print(Tweet.top().content)
         exit(0)
     twit = authenticate()
     response, tweeted = tweet(twit)

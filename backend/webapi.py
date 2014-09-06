@@ -10,6 +10,20 @@ from dbapi import Tweet
 
 app = Flask(__name__)
 
+base_url = "/api"
+
+def body_from_request(request):
+    if request.method == "GET" or request.method == "DELETE":
+        body = request.args
+    else:
+        body = request.get_json(force=True, silent=True)
+        if body is None:
+            body = request.form
+    return body
+
+@app.before_request
+def parse_body():
+    request.body = body_from_request(request)
 
 @app.before_request
 def option_autoreply():
@@ -39,29 +53,7 @@ def option_autoreply():
         return resp
 
 
-@app.route("/add", methods=["POST", "OPTIONS"])
-def add():
-    if request.method == "OPTIONS":
-        return options_response()
-    arguments = request.args
-    tweet = arguments.get("tweet", "")
-    index = arguments.get("index", "")
-    if not tweet:
-        return Response("Give me content, ya dingus.", status=412)
-
-    if not index:
-        response = Tweet.add(tweet)
-    else:
-        response = Tweet.insert_at_index(tweet, int(index))
-
-    if not response:
-        return database_error_response()
-
-    tweet_dict = response.json_object()
-    return jsonify(tweet=tweet_dict)
-
-
-@app.route("/next", methods=["GET"])
+@app.route(base_url + "/tweets/next", methods=["GET"])
 def next_tweet():
     tweet = Tweet.top()
     if not tweet:
@@ -69,35 +61,52 @@ def next_tweet():
     return jsonify(tweet=tweet.json_object())
 
 
-@app.route("/count", methods=["GET"])
-def count():
+@app.route(base_url + "/tweets", methods=["GET", "POST"])
+def all_tweets():
+    if request.method == "GET":
+        return jsonify(tweets=Tweet.all_dicts())
+    elif request.method == "POST":
+        tweet = request.body.get("tweet", "")
+        index = request.body.get("index", "")
+        if not tweet:
+            return Response("Give me content, ya dingus.", status=412)
+
+        if not index:
+            response = Tweet.add(tweet)
+        else:
+            if not index.isdigit():
+                return Response("Index must be a number.", status=412)
+            response = Tweet.insert_at_index(tweet, int(index))
+
+        if not response:
+            return database_error_response()
+
+        tweet_dict = response.json_object()
+        return jsonify(tweet=tweet_dict)
+
+
+@app.route(base_url + "/tweets/count", methods=["GET"])
+def tweet_count():
     return jsonify(count=Tweet.count())
 
 
-@app.route("/all", methods=["GET"])
-def all_tweets():
-    return jsonify(tweets=Tweet.all_dicts())
+@app.route(base_url + "/tweets/<int:id>", methods=["GET", "DELETE"])
+def tweet_with_id(id):
+    tweet = Tweet.for_id(id)
+    if request.method == "GET":
+        return jsonify(tweet=tweet.json_object())
+    elif request.method == "DELETE":
+        response = Tweet.remove_with_id(id)
+        if not response:
+            return database_error_response()
+        tweet_dict = response.json_object()
+        return jsonify(tweet=tweet_dict)
 
 
-@app.route("/remove", methods=["DELETE", "OPTIONS"])
-def remove():
-    arguments = request.args
-    id = arguments.get("id", "")
-    if not id:
-        return Response("You must provide an id, otherwise I don't know what"
-                        " to delete, ya dingus.", 412)
-    response = Tweet.remove_with_id(id)
-    if not response:
-        return database_error_response()
-    tweet_dict = response.json_object()
-    return jsonify(tweet=tweet_dict)
-
-
-@app.route("/move", methods=["POST"])
+@app.route(base_url + "/tweets/move", methods=["POST"])
 def move():
-    arguments = request.args
-    from_index = arguments.get("from", "")
-    to_index = arguments.get("to", "")
+    from_index = request.body.get("from", "")
+    to_index = request.body.get("to", "")
     if not from_index:
         from_index = (Tweet.count() - 1)
 
@@ -145,4 +154,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    app.run(host="san.csh.rit.edu", port=4200, debug=args.test)
+    app.run(host='localhost', port=4200, debug=args.test)

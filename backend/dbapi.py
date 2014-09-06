@@ -112,8 +112,15 @@ class Tweet(Model):
         return self
 
     @classmethod
+    def for_id(cls, id):
+        try:
+            return cls.get(id=id)
+        except Tweet.DoesNotExist:
+            return None
+
+    @classmethod
     def remove_with_id(cls, id):
-        tweet = cls.select().where(cls.id == id).first()
+        tweet = cls.for_id(id)
         if not tweet:
             return None
         return tweet.remove()
