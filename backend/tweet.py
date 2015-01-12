@@ -45,13 +45,16 @@ if __name__ == "__main__":
                         help="Don't tweet and print to standard out.",
                         action="store_true")
     args = parser.parse_args()
+    if Tweet.count() == 0:
+        print("No tweets found.")
+        exit(0)
     if args.test:
         print(Tweet.top().content)
         exit(0)
-    twit = authenticate()
-    response, tweeted = tweet(twit)
+    twitter_client = authenticate()
+    response, tweeted = tweet(twitter_client)
     if response:
         Tweet.pop()
         print("Tweeted: \"", tweeted.content, "\"", sep="")
     else:
-        print("Could not send tweet. Will try again tomorrow.")
+        print("Could not send tweet.")

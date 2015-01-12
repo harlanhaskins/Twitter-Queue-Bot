@@ -5,11 +5,12 @@ from flask import request, make_response, request, current_app
 from flask.json import jsonify
 from functools import update_wrapper
 from datetime import timedelta
+import HTMLParser
 import argparse
 from dbapi import Tweet
 
 app = Flask(__name__)
-
+h = HTMLParser.HTMLParser()
 base_url = "/api"
 
 def body_from_request(request):
@@ -72,7 +73,7 @@ def all_tweets():
             return Response("Give me content, ya dingus.", status=412)
 
         if not index:
-            response = Tweet.add(tweet)
+            response = Tweet.add(h.unescape(tweet))
         else:
             if not index.isdigit():
                 return Response("Index must be a number.", status=412)
