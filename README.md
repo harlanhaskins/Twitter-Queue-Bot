@@ -9,9 +9,11 @@ A Twitter bot that reads and tweets messages in sequence from a queue in a SQLit
 
 #### Dependencies
 
-The server requires a few python libraries: `flask`, `peewee`, `twitter`, `argparse`.
+Install using 
 
-All of these are installable through `pip`.
+```
+pip install -r requirements.txt
+```
 
 #### Setup
 
