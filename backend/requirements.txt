@@ -2,3 +2,4 @@ peewee
 twitter
 argparse
 flask
+flask-cors
