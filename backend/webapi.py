@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-from flask import Flask, Response
-from flask import request, make_response, request, current_app
+from flask import Flask, Response, request
 from flask.json import jsonify
+from flask_cors import CORS
 from functools import update_wrapper
 from datetime import timedelta
 import HTMLParser
@@ -10,6 +10,7 @@ import argparse
 from dbapi import Tweet
 
 app = Flask(__name__)
+cors = CORS(app)
 h = HTMLParser.HTMLParser()
 
 base_url = "/api"
@@ -26,34 +27,6 @@ def body_from_request(request):
 @app.before_request
 def parse_body():
     request.body = body_from_request(request)
-
-@app.before_request
-def option_autoreply():
-    """ Always reply 200 on OPTIONS request """
-
-    if request.method == 'OPTIONS':
-        resp = app.make_default_options_response()
-
-        headers = None
-        if 'ACCESS_CONTROL_REQUEST_HEADERS' in request.headers:
-            headers = request.headers['ACCESS_CONTROL_REQUEST_HEADERS']
-
-        h = resp.headers
-
-        # Allow the origin which made the XHR
-        h['Access-Control-Allow-Origin'] = request.headers['Origin']
-        # Allow the actual method
-        h['Access-Control-Allow-Methods'] = request.headers['Access-Control' + \
-                                                            '-Request-Method']
-        # Allow for 10 seconds
-        h['Access-Control-Max-Age'] = "10"
-
-        # We also keep current headers
-        if headers is not None:
-            h['Access-Control-Allow-Headers'] = headers
-
-        return resp
-
 
 @app.route(base_url + "/tweets/next", methods=["GET"])
 def next_tweet():
@@ -126,25 +99,8 @@ def move():
     return jsonify(tweet=tweet_dict)
 
 
-@app.after_request
-def set_allow_origin(resp):
-    """ Set origin for GET, POST, PUT, DELETE requests """
-
-    h = resp.headers
-
-    # Allow crossdomain for other HTTP Verbs
-    if request.method != 'OPTIONS' and 'Origin' in request.headers:
-        h['Access-Control-Allow-Origin'] = request.headers['Origin']
-
-    return resp
-
-
 def database_error_response():
     return Response("The database is giving some issues with that query.", 500)
-
-
-def options_response():
-    return Response("Yeah there's some options here, bro.", 200)
 
 
 if __name__ == "__main__":
